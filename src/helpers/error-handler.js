@@ -2,7 +2,7 @@ module.exports = errorHandler;
 
 function errorHandler(err, req, res, next) {
   if (typeof (err) === 'string') {
-    if(err.message === 'AuthenticationError'){
+    if(err === 'AuthenticationError'){
       return res.status(401).json({ message: 'Invalid username or password' });
     } else {
       return res.status(400).json({ message: err });

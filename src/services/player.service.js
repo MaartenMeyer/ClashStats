@@ -1,3 +1,4 @@
+const Player = require('../models/player.model');
 const User = require('../models/user.model');
 
 module.exports = {
@@ -13,7 +14,8 @@ module.exports = {
     await new Player({
       'playerId': body.playerId,
       'name': body.name,
-      'level': body.level
+      'level': body.level,
+      'creator': user
     }).save();
   },
 

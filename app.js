@@ -20,6 +20,7 @@ if (env === 'development') {
 const app = express();
 const authenticationRoutes = require('./src/routes/authentication.routes');
 const clansRoutes = require('./src/routes/clans.routes');
+const playersRoutes = require('./src/routes/players.routes');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -69,6 +70,7 @@ app.all("*", (req, res, next) => {
 
 app.use('/api', authenticationRoutes);
 app.use('/api', clansRoutes);
+app.use('/api', playersRoutes);
 
 // Error handler if no matching endpoint found.
 app.all("*", (req, res, next) => {
