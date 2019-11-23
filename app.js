@@ -19,10 +19,13 @@ if (env === 'development') {
 
 const app = express();
 const authenticationRoutes = require('./src/routes/authentication.routes');
+const clansRoutes = require('./src/routes/clans.routes');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use(jwt());
 
 mongoose.Promise = global.Promise;
 
@@ -65,6 +68,7 @@ app.all("*", (req, res, next) => {
 // });
 
 app.use('/api', authenticationRoutes);
+app.use('/api', clansRoutes);
 
 // Error handler if no matching endpoint found.
 app.all("*", (req, res, next) => {

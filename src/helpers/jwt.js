@@ -4,17 +4,21 @@ const config = require('../config/app.config');
 module.exports = jwt;
 
 function jwt() {
-  const key = config.jwtKey;
-  return expressJwt({ key, isRevoked }).unless({
+  const secret = config.jwtKey;
+  return expressJwt({ secret, isRevoked }).unless({
     path: [
-      '/register',
-      '/login'
+      { url: /\/register/ },
+      { url: /\/authenticate/ },
+      { url: /\/clans/, methods: ['GET'] },
+      { url: /\/clans\/.*/, methods: ['GET'] },
+      { url: /\/players/, methods: ['GET'] },
+      { url: /\/players\/.*/, methods: ['GET'] }
     ]
   });
 }
 
 async function isRevoked(req, payload, done) {
-  const user = await userService.getById(payload.sub);
+  const user = await userService.getById(payload.data);
 
   if (!user) {
     return done(null, true);

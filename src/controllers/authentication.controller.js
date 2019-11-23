@@ -1,10 +1,8 @@
 const assert = require('assert');
-const logger = require('../config/app.config').logger;
 const userService = require('../services/user.service');
 
 module.exports = {
   authenticateUser: (req, res, next) => {
-    logger.info('authenticationController.authenticateUser called.');
     try {
       assert.equal(typeof req.body.username, "string", "A valid username is required.");
       assert.equal(typeof req.body.password, "string", "A valid password is required.");
@@ -21,7 +19,6 @@ module.exports = {
     }
   },
   registerUser: (req, res, next) => {
-    logger.info('authenticationController.registerUser called.');
     try {
       assert.equal(typeof req.body.username, "string", "A valid username is required.");
       assert.equal(typeof req.body.email, "string", "A valid email is required.");
@@ -30,7 +27,7 @@ module.exports = {
       userService.create(req.body)
         .then(() => {
           res.status(200).send({
-            message: 'User successfully registered'
+            message: 'User registered'
           });
         })
         .catch((error) => next(error));

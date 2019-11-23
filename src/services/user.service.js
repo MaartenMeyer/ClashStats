@@ -21,7 +21,7 @@ module.exports = {
 
   async create(body) {
     if (await User.findOne({ username: body.username })){
-      throw `Username ${body.username} is already taken.`;
+      throw { status: 409, message: `Username ${body.username} is already taken.` };
     }
 
     const user = new User(body);
