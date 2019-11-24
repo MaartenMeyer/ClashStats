@@ -27,6 +27,10 @@ const PlayerSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'base'
   }],
+  clan: {
+    type: Schema.Types.ObjectId,
+    ref: 'clan'
+  }
 });
 
 PlayerSchema.set('toJSON', { virtuals: true });

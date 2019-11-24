@@ -12,9 +12,10 @@ module.exports = {
       const userId = req.user.data;
 
       clanService.createClan(clanBody, userId)
-        .then(() => {
+        .then((clan) => {
           res.status(200).send({
-            message: 'Clan created'
+            message: 'Clan created',
+            data: clan
           });
         })
         .catch((error) => next(error));
@@ -67,7 +68,7 @@ module.exports = {
       clanService.updateClanById(clanId, description, userId)
         .then(() => {
           res.status(200).send({
-            message: 'Clan updated'
+            message: `Clan ${clanId} updated`
           });
         })
         .catch((error) => next(error));
@@ -87,10 +88,54 @@ module.exports = {
       clanService.deleteClanById(clanId, userId)
         .then(() => {
           res.status(200).send({
-            message: 'Clan deleted'
+            message: `Clan ${clanId} deleted`
           });
         })
         .catch((error) => next(error));
+    } catch (e) {
+      return res.status(422).send({
+        message: e.toString()
+      });
+    }
+  },
+
+  addPlayerToClan: (req, res, next) => {
+    try {
+      assert.equal(typeof req.params.id, "string", "Clan id is required.");
+      assert.equal(typeof req.body.playerId, "string", "Player id is required.");
+      const clanId = req.params.id;
+      const playerId = req.body.playerId;
+      const userId = req.user.data;
+
+      clanService.addPlayerToClan(clanId, playerId, userId)
+        .then(() => {
+          res.status(200).send({
+            message: `Player ${playerId} added to clan ${clanId}`
+          });
+        })
+        .catch((error) => next(error));
+    } catch (e) {
+      return res.status(422).send({
+        message: e.toString()
+      });
+    }
+  },
+
+  removePlayerFromClan: (req, res, next) => {
+    try {
+      assert.equal(typeof req.params.id, "string", "Clan id is required.");
+      assert.equal(typeof req.body.playerId, "string", "Player id is required.");
+      const clanId = req.params.id;
+      const playerId = req.body.playerId;
+      const userId = req.user.data;
+
+      // clanService.addPlayerToClan(clanId, playerId, userId)
+      //   .then(() => {
+      //     res.status(200).send({
+      //       message: `Player ${playerId} added to clan ${clanId}`
+      //     });
+      //   })
+      //   .catch((error) => next(error));
     } catch (e) {
       return res.status(422).send({
         message: e.toString()
