@@ -39,6 +39,7 @@ module.exports = {
     }
   },
 
+  // Only deletes player if the userId matches the player creator
   async deletePlayerById(id, userId) {
     const player = await Player.findOne({ playerId: id });
     if (player === null) {

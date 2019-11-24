@@ -10,6 +10,6 @@ router.patch('/clans/:id', ClansController.updateClanById);
 router.delete('/clans/:id', ClansController.deleteClanById);
 
 router.put('/clans/:id/players', ClansController.addPlayerToClan);
-router.delete('/clans/:id/players', ClansController.removePlayerFromClan);
+router.delete('/clans/:id/players/:playerId', ClansController.removePlayerFromClan);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const Clan = require('../models/clan.model');
 const User = require('../models/user.model');
 const Player = require('../models/player.model');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
   async createClan(body, userId) {
@@ -67,7 +68,6 @@ module.exports = {
         _id: id,
         'members.id': { $ne: 'something' }
       };
-      console.log(clan.members._id)
       await Clan.updateOne(
         { _id: clan.id },
         { $addToSet: { members: player }}
@@ -95,14 +95,14 @@ module.exports = {
     if (player.creator.toString() === userId.toString() || clan.creator.toString() === userId.toString()) {
       await Clan.updateOne(
         { _id: clan.id },
-        { $pull: { members: { _id: player.id } } }
+        { $pull: { members: player._id } }
       );
       return await Player.updateOne(
         { _id: player.id },
-        { $set: { clan: {} } }
+        { $unset: { clan: true } }
       );
     } else {
-      throw `Not authorised to add this player to a clan`
+      throw `Not authorised to remove this player from this clan`
     }
   },
 

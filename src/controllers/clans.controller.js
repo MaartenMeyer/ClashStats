@@ -124,18 +124,19 @@ module.exports = {
   removePlayerFromClan: (req, res, next) => {
     try {
       assert.equal(typeof req.params.id, "string", "Clan id is required.");
-      assert.equal(typeof req.body.playerId, "string", "Player id is required.");
+      assert.equal(typeof req.params.playerId, "string", "Player id is required.");
       const clanId = req.params.id;
-      const playerId = req.body.playerId;
+      const playerId = req.params.playerId;
       const userId = req.user.data;
 
-      // clanService.addPlayerToClan(clanId, playerId, userId)
-      //   .then(() => {
-      //     res.status(200).send({
-      //       message: `Player ${playerId} added to clan ${clanId}`
-      //     });
-      //   })
-      //   .catch((error) => next(error));
+      clanService.removePlayerFromClan(clanId, playerId, userId)
+        .then(() => {
+          res.status(200).send({
+            message: `Player ${playerId} removed from clan ${clanId}`
+          });
+        })
+        .catch((error) => next(error));
+
     } catch (e) {
       return res.status(422).send({
         message: e.toString()
