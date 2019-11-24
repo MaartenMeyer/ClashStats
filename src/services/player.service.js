@@ -1,14 +1,15 @@
 const Player = require('../models/player.model');
 const User = require('../models/user.model');
+const Clan = require('../models/clan.model');
 
 module.exports = {
   async createPlayer(body, userId) {
     if (await Player.findOne({ playerId: body.playerId })) {
-      throw `Player with id ${body.playerId} already exists.`;
+      throw { status: 409, message: `Player with id ${body.playerId} already exists.` };
     }
     const user = await User.findById(userId);
     if (user === null) {
-      throw `User not found`;
+      throw { status: 204, message: 'User not found' };
     }
 
     await new Player({
@@ -24,18 +25,23 @@ module.exports = {
   },
 
   async getPlayerById(id) {
-    return await Player.findOne({ playerId: id });
+    const player = await Player.findOne({ playerId: id });
+    if (player === null) {
+      throw { status: 204, message: 'Player not found' };
+    } else {
+      return player;
+    }
   },
 
   async updatePlayerById(id, name, userId) {
     const player = await Player.findOne({ playerId: id });
     if (player === null) {
-      throw `Player not found`;
+      throw {}
     }
     if (player.creator.toString() === userId.toString()) {
       return await player.updateOne({ $set: { 'name': name } });
     } else {
-      throw `Not authorised to update this user`
+      throw { status: 401, message: 'Not authorised to update this player' };
     }
   },
 
@@ -43,12 +49,17 @@ module.exports = {
   async deletePlayerById(id, userId) {
     const player = await Player.findOne({ playerId: id });
     if (player === null) {
-      throw `Player not found`;
+      throw { status: 204, message: 'Player not found' };
     }
+    console.log(player)
     if (player.creator.toString() === userId.toString()) {
+      await Clan.updateOne(
+        { _id: player.clan },
+        { $pull: { members: player._id } }
+      );
       return await player.deleteOne();
     } else {
-      throw `Not authorised to delete this user`
+      throw { status: 401, message: 'Not authorised to delete this player' };
     }
   }
 }

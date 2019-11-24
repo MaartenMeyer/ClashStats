@@ -1,16 +1,15 @@
 const Clan = require('../models/clan.model');
 const User = require('../models/user.model');
 const Player = require('../models/player.model');
-var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
   async createClan(body, userId) {
     if (await Clan.findOne({ clanId: body.clanId })) {
-      throw `Clan with id ${body.clanId} already exists.`;
+      throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
     }
     const user = await User.findById(userId);
     if(user === null){
-      throw `User not found`;
+      throw { status: 204, message: 'User not found' };
     }
 
     await new Clan({
@@ -26,48 +25,53 @@ module.exports = {
   },
 
   async getClanById(id) {
-    return await Clan.findOne({ clanId: id});
+    const clan = await Clan.findOne({ clanId: id});
+    if(clan === null){
+      throw { status: 204, message: 'Clan not found'};
+    } else {
+      return clan;
+    }
   },
 
   async updateClanById(id, description, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if(clan === null){
-      throw `Clan not found`;
+      throw { status: 204, message: 'Clan not found' };
     }
     if (clan.creator.toString() === userId.toString()) {
       return await clan.updateOne({ $set: { 'description': description }});
     } else {
-      throw `Not authorised to update this clan`
+      throw { status: 401, message: 'Not authorised to update this clan' };
     }
   },
 
   async deleteClanById(id, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if (clan === null) {
-      throw `Clan not found`;
+      throw { status: 204, message: 'Clan not found' };
     }
     if(clan.creator.toString() === userId.toString()){
+      await Player.updateMany(
+        { clan: clan.id },
+        { $unset: { clan: true } }
+      );
       return await clan.deleteOne();
     } else {
-      throw `Not authorised to delete this clan`
+      throw { status: 401, message: 'Not authorised to delete this clan' };
     }
   },
 
   async addPlayerToClan(id, playerId, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if (clan === null) {
-      throw `Clan not found`;
+      throw { status: 204, message: 'Clan not found' };
     }
     const player = await Player.findOne({ playerId: playerId });
     if(player === null){
-      throw `Player not found`;
+      throw { status: 204, message: 'Player not found' };
     }
 
     if (player.creator.toString() === userId.toString()) {
-      var conditions = {
-        _id: id,
-        'members.id': { $ne: 'something' }
-      };
       await Clan.updateOne(
         { _id: clan.id },
         { $addToSet: { members: player }}
@@ -77,18 +81,18 @@ module.exports = {
         { $set: { clan: clan }}
       );
     } else {
-      throw `Not authorised to add this player to a clan`
+      throw { status: 401, message: 'Not authorised to add this player to a clan' };
     }
   },
 
   async removePlayerFromClan(id, playerId, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if (clan === null) {
-      throw `Clan not found`;
+      throw { status: 204, message: 'Clan not found' };
     }
     const player = await Player.findOne({ playerId: playerId });
     if (player === null) {
-      throw `Player not found`;
+      throw { status: 204, message: 'Player not found' };
     }
 
     // Only removes player if the userId matches the player creator or the clan creator
@@ -102,7 +106,7 @@ module.exports = {
         { $unset: { clan: true } }
       );
     } else {
-      throw `Not authorised to remove this player from this clan`
+      throw { status: 401, message: 'Not authorised to remove this player from a clan' };
     }
   },
 

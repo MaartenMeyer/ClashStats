@@ -11,7 +11,7 @@ module.exports = {
       const token = jwt.sign({ data: user.id }, config.jwtKey);
       return { ...userRest, token };
     } else {
-      throw `AuthenticationError`;
+      throw { status: 401, message: 'Invalid username or password' };
     }
   },
 
