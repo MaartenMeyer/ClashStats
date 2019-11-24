@@ -2,16 +2,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const BaseSchema = new Schema({
-  name: {
+  title: {
     type: String,
     required: [true, 'Base needs to have a title']
   },
   url: {
     type: String,
-    required: [true, 'Base needs to have a link']
+    required: [true, 'Base needs to have a link'],
+    match: [/^(http|https):\/\/link[.]clashofclans[.]com\/[a-z]{2}\?action=OpenLayout&id=TH/, 'is invalid'],
   },
   image: {
-    type: String,
+    contentType: String,
     data: Buffer
   }
 });

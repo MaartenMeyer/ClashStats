@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('./src/helpers/jwt');
@@ -25,6 +26,12 @@ const playersRoutes = require('./src/routes/players.routes');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+
+// app.use(multer({ dest: `./uploads/`,
+//   rename: function(fieldname, filename) {
+//     return filename;
+//   }
+// }));
 
 app.use(jwt());
 

@@ -85,6 +85,20 @@ module.exports = {
     }
   },
 
+  async getAllPlayersFromClan(id) {
+    const clan = await Clan.findOne({ clanId: id })
+      .populate({
+        path: 'members',
+        model: 'player',
+        select: '-creator -__v -clan -bases'
+      });
+    if (clan === null) {
+      throw { status: 204, message: 'Clan not found' };
+    } else {
+      return clan;
+    }
+  },
+
   async removePlayerFromClan(id, playerId, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if (clan === null) {

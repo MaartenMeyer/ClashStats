@@ -121,6 +121,23 @@ module.exports = {
     }
   },
 
+  getAllPlayersFromClan: (req, res, next) => {
+    try {
+      assert.equal(typeof req.params.id, "string", "Clan id is required.");
+      const clanId = req.params.id;
+
+      clanService.getAllPlayersFromClan(clanId)
+        .then((clan) => {
+          res.status(200).json(clan);
+        })
+        .catch((error) => next(error));
+    } catch (e) {
+      return res.status(422).send({
+        message: e.toString()
+      });
+    }
+  },
+
   removePlayerFromClan: (req, res, next) => {
     try {
       assert.equal(typeof req.params.id, "string", "Clan id is required.");

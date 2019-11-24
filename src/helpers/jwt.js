@@ -11,8 +11,11 @@ function jwt() {
       { url: /\/authenticate/ },
       { url: /\/clans/, methods: ['GET'] },
       { url: /\/clans\/.*/, methods: ['GET'] },
+      { url: /\/clans\/.*\/players/, methods: ['GET'] },
       { url: /\/players/, methods: ['GET'] },
-      { url: /\/players\/.*/, methods: ['GET'] }
+      { url: /\/players\/.*/, methods: ['GET'] },
+      { url: /\/players\/.*\/bases/, methods: ['GET'] },
+      { url: /\/players\/.*\/bases\/.*/, methods: ['GET'] }
     ]
   });
 }

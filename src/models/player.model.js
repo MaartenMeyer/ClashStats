@@ -37,15 +37,8 @@ PlayerSchema.set('toJSON', { virtuals: true });
 
 PlayerSchema.pre('remove', { query: true, document: false }, function (next) {
   const Base = mongoose.model('base');
-  const Clan = mongoose.model('clan');
-  console.log("clan: " +this.clan)
   Base.remove({ _id: { $in: this.bases } })
-    .then(() => {
-      Clan.updateOne(
-        { _id: this.clan },
-        { $pull: { members: this._id } }
-      ).then(() => next());
-    })
+    .then(() => next());
 });
 
 const Player = mongoose.model('player', PlayerSchema);
