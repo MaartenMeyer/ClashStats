@@ -4,7 +4,7 @@ const userService = require('../services/user.service');
 module.exports = {
   authenticateUser: (req, res, next) => {
     try {
-      assert.equal(typeof req.body.username, "string", "A valid username is required.");
+      assert.equal(typeof req.body.email, "string", "A valid email is required.");
       assert.equal(typeof req.body.password, "string", "A valid password is required.");
 
       userService.authenticate(req.body)

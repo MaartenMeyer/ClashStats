@@ -4,14 +4,14 @@ const config = require('../config/app.config');
 const User = require('../models/user.model');
 
 module.exports = {
-  async authenticate ({ username, password }) {
-    const user = await User.findOne({ username });
+  async authenticate ({ email, password }) {
+    const user = await User.findOne({ email });
     if(user && bcrypt.compareSync(password, user.hash)) {
       const { hash, ...userRest } = user.toObject();
       const token = jwt.sign({ data: user.id }, config.jwtKey);
       return { ...userRest, token };
     } else {
-      throw { status: 401, message: 'Invalid username or password' };
+      throw { status: 401, message: 'Invalid email or password' };
     }
   },
 
@@ -20,8 +20,8 @@ module.exports = {
   },
 
   async create(body) {
-    if (await User.findOne({ username: body.username })){
-      throw { status: 409, message: `Username ${body.username} is already taken.` };
+    if (await User.findOne({ email: body.email })){
+      throw { status: 409, message: `Email ${body.email} is already taken.` };
     }
 
     const user = new User(body);
