@@ -12,5 +12,6 @@ module.exports = {
       data.title = data.title.toUpperCase();
     },
     level: "info, error"
-  })
+  }),
+  jwtKey: process.env.JWT_KEY
 };
