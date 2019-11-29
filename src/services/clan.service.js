@@ -25,7 +25,12 @@ module.exports = {
   },
 
   async getClanById(id) {
-    const clan = await Clan.findOne({ clanId: id});
+    const clan = await Clan.findOne({ clanId: id})
+      .populate({
+        path: 'members',
+        model: 'player',
+        select: '-creator -__v -clan -bases'
+      });
     if(clan === null){
       throw { status: 204, message: 'Clan not found'};
     } else {
