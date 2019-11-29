@@ -46,7 +46,7 @@ module.exports = {
     if (clan.creator.toString() === userId.toString()) {
       return await clan.updateOne({ $set: { 'description': description }});
     } else {
-      throw { status: 401, message: 'Not authorised to update this clan' };
+      throw { status: 403, message: 'Not authorised to update this clan' };
     }
   },
 
@@ -62,7 +62,7 @@ module.exports = {
       );
       return await clan.deleteOne();
     } else {
-      throw { status: 401, message: 'Not authorised to delete this clan' };
+      throw { status: 403, message: 'Not authorised to delete this clan' };
     }
   },
 
@@ -86,7 +86,7 @@ module.exports = {
         { $set: { clan: clan }}
       );
     } else {
-      throw { status: 401, message: 'Not authorised to add this player to a clan' };
+      throw { status: 403, message: 'Not authorised to add this player to a clan' };
     }
   },
 
@@ -125,7 +125,7 @@ module.exports = {
         { $unset: { clan: true } }
       );
     } else {
-      throw { status: 401, message: 'Not authorised to remove this player from a clan' };
+      throw { status: 403, message: 'Not authorised to remove this player from a clan' };
     }
   },
 

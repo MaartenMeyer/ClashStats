@@ -11,7 +11,7 @@ module.exports = {
       const token = jwt.sign({ data: user.id }, config.jwtKey);
       return { ...userRest, token };
     } else {
-      throw { status: 401, message: 'Invalid email or password' };
+      throw { status: 403, message: 'Invalid email or password' };
     }
   },
 
