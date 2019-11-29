@@ -3,7 +3,7 @@ const User = require('../models/user.model');
 const Player = require('../models/player.model');
 
 module.exports = {
-  async createClan(body, userId) {
+  async createClan(body, userId, imageUrl) {
     if (await Clan.findOne({ clanId: body.clanId })) {
       throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
     }
@@ -16,7 +16,8 @@ module.exports = {
       'clanId': body.clanId,
       'name': body.name,
       'description': body.description,
-      'creator': user
+      'creator': user,
+      'image': imageUrl
     }).save();
   },
 

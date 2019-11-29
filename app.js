@@ -23,15 +23,9 @@ const authenticationRoutes = require('./src/routes/authentication.routes');
 const clansRoutes = require('./src/routes/clans.routes');
 const playersRoutes = require('./src/routes/players.routes');
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 app.use(cors());
-
-// app.use(multer({ dest: `./uploads/`,
-//   rename: function(fieldname, filename) {
-//     return filename;
-//   }
-// }));
 
 app.use(jwt());
 
@@ -74,7 +68,7 @@ app.all("*", (req, res, next) => {
 //   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
 //   next();
 // });
-
+app.use('/api/images', express.static('images'));
 app.use('/api', authenticationRoutes);
 app.use('/api', clansRoutes);
 app.use('/api', playersRoutes);
