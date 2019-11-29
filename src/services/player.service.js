@@ -1,6 +1,7 @@
 const Player = require('../models/player.model');
 const User = require('../models/user.model');
 const Clan = require('../models/clan.model');
+const Base = require('../models/base.model');
 
 module.exports = {
   async createPlayer(body, userId) {
@@ -25,7 +26,22 @@ module.exports = {
   },
 
   async getPlayerById(id) {
-    const player = await Player.findOne({ playerId: id });
+    const player = await Player.findOne({ playerId: id })
+      .populate({
+        path: 'bases',
+        model: 'base',
+        select: '-__v'
+      })
+      .populate({
+        path: 'clan',
+        model: 'clan',
+        select: '-__v -messages -description'
+      })
+      .populate({
+        path: 'creator',
+        model: 'user',
+        select: '-__v -email -hash'
+      });
     if (player === null) {
       throw { status: 204, message: 'Player not found' };
     } else {
