@@ -1,6 +1,7 @@
 const Clan = require('../models/clan.model');
 const User = require('../models/user.model');
 const Player = require('../models/player.model');
+const fs = require('fs');
 
 module.exports = {
   async createClan(body, userId, imageUrl) {
@@ -61,7 +62,12 @@ module.exports = {
         { clan: clan.id },
         { $unset: { clan: true } }
       );
-      return await clan.deleteOne();
+      const filepath = `.${clan.image.split("api").pop()}`
+      fs.unlink(filepath, async function(err) {
+        if(err) throw err;
+
+        return await clan.deleteOne()
+      });
     } else {
       throw { status: 403, message: 'Not authorised to delete this clan' };
     }
