@@ -23,6 +23,9 @@ module.exports = {
     if (await User.findOne({ email: body.email })){
       throw { status: 409, message: `Email ${body.email} is already taken.` };
     }
+    if (await User.findOne({ username: body.username })) {
+      throw { status: 409, message: `Username ${body.username} is already taken.` };
+    }
 
     const user = new User(body);
     if (body.password) {
