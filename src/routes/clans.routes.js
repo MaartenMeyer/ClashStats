@@ -36,7 +36,7 @@ router.post('/clans', upload.single('image'), (req, res, next) => {
     const userId = req.user.data;
 
     const url = req.protocol + '://' + req.get('host');
-    const imageUrl = `${url}/api/images/${req.file.filename}`
+    const imageUrl = `${url}/api/images/${req.file.filename}`;
 
     clanService.createClan(clanBody, userId, imageUrl)
       .then((clan) => {

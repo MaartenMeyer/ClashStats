@@ -6,6 +6,10 @@ const fs = require('fs');
 module.exports = {
   async createClan(body, userId, imageUrl) {
     if (await Clan.findOne({ clanId: body.clanId })) {
+      const filepath = `.${imageUrl.split("api").pop()}`
+      fs.unlink(filepath, async function (err) {
+        if (err) throw err;
+      });
       throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
     }
     const user = await User.findById(userId);
@@ -58,13 +62,14 @@ module.exports = {
       throw { status: 204, message: 'Clan not found' };
     }
     if(clan.creator.toString() === userId.toString()){
-      await Player.updateMany(
-        { clan: clan.id },
-        { $unset: { clan: true } }
-      );
       const filepath = `.${clan.image.split("api").pop()}`
       fs.unlink(filepath, async function(err) {
         if(err) throw err;
+
+        await Player.updateMany(
+          { clan: clan.id },
+          { $unset: { clan: true } }
+        );
 
         return await clan.deleteOne()
       });
