@@ -23,8 +23,8 @@ const authenticationRoutes = require('./src/routes/authentication.routes');
 const clansRoutes = require('./src/routes/clans.routes');
 const playersRoutes = require('./src/routes/players.routes');
 
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cors());
 
 app.use(jwt());
