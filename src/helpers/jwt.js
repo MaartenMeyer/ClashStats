@@ -7,6 +7,7 @@ function jwt() {
   const secret = config.jwtKey;
   return expressJwt({ secret, isRevoked }).unless({
     path: [
+      { url: /\/images/, methods: ['GET'] },
       { url: /\/register/ },
       { url: /\/authenticate/ },
       { url: /\/clans/, methods: ['GET'] },

@@ -23,6 +23,9 @@ const ClanSchema = new Schema({
     ref: 'user',
     required: [true, 'Clan needs to have a creator']
   },
+  image: {
+    type: String,
+  },
   members: [{
     type: Schema.Types.ObjectId,
     ref: 'player'
@@ -30,10 +33,6 @@ const ClanSchema = new Schema({
   messages: [{
     type: String
   }]
-});
-
-ClanSchema.virtual('memberCount').get(function () {
-  return this.members.length;
 });
 
 ClanSchema.set('toJSON', { virtuals: true });

@@ -57,7 +57,7 @@ module.exports = {
     if (player.creator.toString() === userId.toString()) {
       return await player.updateOne({ $set: { 'name': name } });
     } else {
-      throw { status: 401, message: 'Not authorised to update this player' };
+      throw { status: 403, message: 'Not authorised to update this player' };
     }
   },
 
@@ -75,7 +75,7 @@ module.exports = {
       );
       return await player.deleteOne();
     } else {
-      throw { status: 401, message: 'Not authorised to delete this player' };
+      throw { status: 403, message: 'Not authorised to delete this player' };
     }
   }
 }

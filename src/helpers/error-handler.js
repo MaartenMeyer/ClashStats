@@ -14,7 +14,11 @@ function errorHandler(err, req, res, next) {
   }
 
   if(err.name === 'MongoError') {
-    return res.status(400).json({ message: err.errmsg });
+    if (err.code === 11000) {
+      return res.status(409).json({ message: 'Username is already taken' });
+    } else {
+      return res.status(400).json({ message: err.message });
+    }
   }
 
   if (err.name === 'UnauthorizedError') {
@@ -22,7 +26,11 @@ function errorHandler(err, req, res, next) {
   }
 
   if (typeof (err) === 'object') {
-    return res.status(err.status).json({ message: err.message })
+    if(err.status) {
+      return res.status(err.status).json({ message: err.message })
+    } else {
+      return res.status(400).json({ message: err.message })
+    }
   }
 
   return res.status(500).json({ message: err.message });

@@ -1,9 +1,10 @@
 const Clan = require('../models/clan.model');
 const User = require('../models/user.model');
 const Player = require('../models/player.model');
+const fs = require('fs');
 
 module.exports = {
-  async createClan(body, userId) {
+  async createClan(body, userId, imageUrl) {
     if (await Clan.findOne({ clanId: body.clanId })) {
       throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
     }
@@ -16,7 +17,8 @@ module.exports = {
       'clanId': body.clanId,
       'name': body.name,
       'description': body.description,
-      'creator': user
+      'creator': user,
+      'image': imageUrl
     }).save();
   },
 
@@ -46,7 +48,7 @@ module.exports = {
     if (clan.creator.toString() === userId.toString()) {
       return await clan.updateOne({ $set: { 'description': description }});
     } else {
-      throw { status: 401, message: 'Not authorised to update this clan' };
+      throw { status: 403, message: 'Not authorised to update this clan' };
     }
   },
 
@@ -60,9 +62,14 @@ module.exports = {
         { clan: clan.id },
         { $unset: { clan: true } }
       );
-      return await clan.deleteOne();
+      const filepath = `.${clan.image.split("api").pop()}`
+      fs.unlink(filepath, async function(err) {
+        if(err) throw err;
+
+        return await clan.deleteOne()
+      });
     } else {
-      throw { status: 401, message: 'Not authorised to delete this clan' };
+      throw { status: 403, message: 'Not authorised to delete this clan' };
     }
   },
 
@@ -86,7 +93,7 @@ module.exports = {
         { $set: { clan: clan }}
       );
     } else {
-      throw { status: 401, message: 'Not authorised to add this player to a clan' };
+      throw { status: 403, message: 'Not authorised to add this player to a clan' };
     }
   },
 
@@ -125,7 +132,7 @@ module.exports = {
         { $unset: { clan: true } }
       );
     } else {
-      throw { status: 401, message: 'Not authorised to remove this player from a clan' };
+      throw { status: 403, message: 'Not authorised to remove this player from a clan' };
     }
   },
 
