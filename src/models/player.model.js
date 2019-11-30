@@ -23,6 +23,9 @@ const PlayerSchema = new Schema({
     ref: 'user',
     required: [true, 'Player needs to have a creator']
   },
+  image: {
+    type: String
+  },
   bases: [{
     type: Schema.Types.ObjectId,
     ref: 'base'

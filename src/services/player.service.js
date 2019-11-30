@@ -2,10 +2,15 @@ const Player = require('../models/player.model');
 const User = require('../models/user.model');
 const Clan = require('../models/clan.model');
 const Base = require('../models/base.model');
+const fs = require('fs');
 
 module.exports = {
-  async createPlayer(body, userId) {
+  async createPlayer(body, userId, imageUrl) {
     if (await Player.findOne({ playerId: body.playerId })) {
+      const filepath = `.${imageUrl.split("api").pop()}`
+      fs.unlink(filepath, async function (err) {
+        if (err) throw err;
+      });
       throw { status: 409, message: `Player with id ${body.playerId} already exists.` };
     }
     const user = await User.findById(userId);
@@ -17,7 +22,8 @@ module.exports = {
       'playerId': body.playerId,
       'name': body.name,
       'level': body.level,
-      'creator': user
+      'creator': user,
+      'image': imageUrl
     }).save();
   },
 
@@ -67,13 +73,18 @@ module.exports = {
     if (player === null) {
       throw { status: 204, message: 'Player not found' };
     }
-    console.log(player)
     if (player.creator.toString() === userId.toString()) {
-      await Clan.updateOne(
-        { _id: player.clan },
-        { $pull: { members: player._id } }
-      );
-      return await player.deleteOne();
+      const filepath = `.${player.image.split("api").pop()}`
+      fs.unlink(filepath, async function (err) {
+        if (err) throw err;
+
+        await Clan.updateOne(
+          { _id: player.clan },
+          { $pull: { members: player._id } }
+        );
+
+        return await player.deleteOne();
+      });
     } else {
       throw { status: 403, message: 'Not authorised to delete this player' };
     }
