@@ -27,11 +27,19 @@ module.exports = {
 
   getAllPlayers: (req, res, next) => {
     try {
-       playerService.getAllPlayers()
-        .then((players) => {
-          res.status(200).json(players);
-        })
-        .catch((error) => next(error));
+      if(req.query.userId) {
+        playerService.getAllPlayersFromUser(req.query.userId)
+          .then((players) => {
+            res.status(200).json(players);
+          })
+          .catch((error) => next(error));
+      } else {
+        playerService.getAllPlayers()
+          .then((players) => {
+            res.status(200).json(players);
+          })
+          .catch((error) => next(error));
+      }
     } catch (e) {
       return res.status(422).send({
         message: e.toString()
@@ -97,6 +105,8 @@ module.exports = {
       });
     }
   },
+
+
 
   addBase: (req, res, next) => {
     try {
