@@ -15,7 +15,7 @@ module.exports = {
     }
     const user = await User.findById(userId);
     if (user === null) {
-      throw { status: 204, message: 'User not found' };
+      throw { status: 404, message: 'User not found' };
     }
 
     await new Player({
@@ -49,7 +49,7 @@ module.exports = {
         select: '-__v -email -hash'
       });
     if (player === null) {
-      throw { status: 204, message: 'Player not found' };
+      throw { status: 404, message: 'Player not found' };
     } else {
       return player;
     }
@@ -71,7 +71,7 @@ module.exports = {
   async deletePlayerById(id, userId) {
     const player = await Player.findOne({ playerId: id });
     if (player === null) {
-      throw { status: 204, message: 'Player not found' };
+      throw { status: 404, message: 'Player not found' };
     }
     if (player.creator.toString() === userId.toString()) {
       const filepath = `.${player.image.split("api").pop()}`
@@ -88,5 +88,14 @@ module.exports = {
     } else {
       throw { status: 403, message: 'Not authorised to delete this player' };
     }
-  }
+  },
+
+  async getAllPlayersFromUser(userId) {
+    const user = await User.findById(userId);
+    if (user === null) {
+      throw { status: 404, message: 'User not found' };
+    }
+
+    return await Player.find({ creator: userId});
+  },
 }

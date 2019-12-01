@@ -14,7 +14,7 @@ module.exports = {
     }
     const user = await User.findById(userId);
     if(user === null){
-      throw { status: 204, message: 'User not found' };
+      throw { status: 404, message: 'User not found' };
     }
 
     await new Clan({
@@ -38,7 +38,7 @@ module.exports = {
         select: '-creator -__v -clan -bases'
       });
     if(clan === null){
-      throw { status: 204, message: 'Clan not found'};
+      throw { status: 404, message: 'Clan not found'};
     } else {
       return clan;
     }
@@ -47,7 +47,7 @@ module.exports = {
   async updateClanById(id, description, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if(clan === null){
-      throw { status: 204, message: 'Clan not found' };
+      throw { status: 404, message: 'Clan not found' };
     }
     if (clan.creator.toString() === userId.toString()) {
       return await clan.updateOne({ $set: { 'description': description }});
@@ -59,7 +59,7 @@ module.exports = {
   async deleteClanById(id, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if (clan === null) {
-      throw { status: 204, message: 'Clan not found' };
+      throw { status: 404, message: 'Clan not found' };
     }
     if(clan.creator.toString() === userId.toString()){
       const filepath = `.${clan.image.split("api").pop()}`
@@ -81,11 +81,11 @@ module.exports = {
   async addPlayerToClan(id, playerId, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if (clan === null) {
-      throw { status: 204, message: 'Clan not found' };
+      throw { status: 404, message: 'Clan not found' };
     }
     const player = await Player.findOne({ playerId: playerId });
     if(player === null){
-      throw { status: 204, message: 'Player not found' };
+      throw { status: 404, message: 'Player not found' };
     }
 
     if (player.creator.toString() === userId.toString()) {
@@ -110,7 +110,7 @@ module.exports = {
         select: '-creator -__v -clan -bases'
       });
     if (clan === null) {
-      throw { status: 204, message: 'Clan not found' };
+      throw { status: 404, message: 'Clan not found' };
     } else {
       return clan;
     }
@@ -119,11 +119,11 @@ module.exports = {
   async removePlayerFromClan(id, playerId, userId) {
     const clan = await Clan.findOne({ clanId: id });
     if (clan === null) {
-      throw { status: 204, message: 'Clan not found' };
+      throw { status: 404, message: 'Clan not found' };
     }
     const player = await Player.findOne({ playerId: playerId });
     if (player === null) {
-      throw { status: 204, message: 'Player not found' };
+      throw { status: 404, message: 'Player not found' };
     }
 
     // Only removes player if the userId matches the player creator or the clan creator
