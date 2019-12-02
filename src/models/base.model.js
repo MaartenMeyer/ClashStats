@@ -6,14 +6,18 @@ const BaseSchema = new Schema({
     type: String,
     required: [true, 'Base needs to have a title']
   },
-  url: {
+  link: {
     type: String,
     required: [true, 'Base needs to have a link'],
     match: [/^(http|https):\/\/link[.]clashofclans[.]com\/[a-z]{2}\?action=OpenLayout&id=TH/, 'is invalid'],
   },
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'user',
+    required: [true, 'Base needs to have a creator']
+  },
   image: {
-    contentType: String,
-    data: Buffer
+    type: String,
   }
 });
 

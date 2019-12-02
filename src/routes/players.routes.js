@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const PlayersController = require('../controllers/players.controller');
-const BasesController = require('../controllers/bases.controller');
 const playerService = require('../services/player.service');
+const baseService = require('../services/base.service');
 
 const dir = './images/';
 const storage = multer.diskStorage({
@@ -58,8 +58,28 @@ router.get('/players/:id', PlayersController.getPlayerById);
 router.patch('/players/:id', PlayersController.updatePlayerById);
 router.delete('/players/:id', PlayersController.deletePlayerById);
 
-router.post('/players/:id/bases', PlayersController.addBase);
-router.get('/players/:id/bases', PlayersController.getAllBases);
-router.get('/players/:id/bases/:id', PlayersController.getBaseById);
+router.post('/players/:id/bases', upload.single('image'), (req, res, next) => {
+  try {
+    const playerId = req.params.id;
+    const baseBody = req.body;
+    const userId = req.user.data;
+
+    const url = req.protocol + '://' + req.get('host');
+    const imageUrl = `${url}/api/images/${req.file.filename}`;
+
+    baseService.addBaseToPlayer(playerId, baseBody, userId, imageUrl)
+      .then(() => {
+        res.status(200).send({
+          message: `Base added to player ${playerId}`
+        });
+      })
+      .catch((error) => next(error));
+  } catch (e) {
+    return res.status(422).send({
+      message: e.toString()
+    });
+  }
+});
+router.delete('/players/:id/bases/:baseId', PlayersController.deleteBaseById);
 
 module.exports = router;
