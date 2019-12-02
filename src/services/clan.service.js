@@ -7,10 +7,9 @@ module.exports = {
   async createClan(body, userId, imageUrl) {
     if (await Clan.findOne({ clanId: body.clanId })) {
       const filepath = `.${imageUrl.split("api").pop()}`
-      fs.unlink(filepath, async function (err) {
-        if (err) throw err;
+      fs.unlink(filepath, function() {
+        throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
       });
-      throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
     }
     const user = await User.findById(userId);
     if(user === null){
@@ -63,9 +62,7 @@ module.exports = {
     }
     if(clan.creator.toString() === userId.toString()){
       const filepath = `.${clan.image.split("api").pop()}`
-      fs.unlink(filepath, async function(err) {
-        if(err) throw err;
-
+      fs.unlink(filepath, async function() {
         await Player.updateMany(
           { clan: clan.id },
           { $unset: { clan: true } }

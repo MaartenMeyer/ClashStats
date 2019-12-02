@@ -1,6 +1,7 @@
 const assert = require('assert');
 const logger = require('../config/app.config').logger;
 const playerService = require('../services/player.service');
+const baseService = require('../services/base.service');
 
 module.exports = {
   createPlayer: (req, res, next) => {
@@ -106,30 +107,25 @@ module.exports = {
     }
   },
 
-
-
-  addBase: (req, res, next) => {
+  deleteBaseById: (req, res, next) => {
     try {
       assert.equal(typeof req.params.id, "string", "Player id is required.");
+      assert.equal(typeof req.params.baseId, "string", "Base id is required.");
       const playerId = req.params.id;
+      const baseId = req.params.baseId;
       const userId = req.user.data;
 
-      res.status(200).send({
-        message: 'No auth required test'
-      });
-
+      baseService.deleteBaseById(baseId, userId)
+        .then(() => {
+          res.status(200).send({
+            message: 'Player deleted'
+          });
+        })
+        .catch((error) => next(error));
     } catch (e) {
       return res.status(422).send({
         message: e.toString()
       });
     }
-  },
-
-  getAllBases: (req, res, next) => {
-
-  },
-
-  getBaseById: (req, res, next) => {
-
   }
 }

@@ -8,10 +8,10 @@ module.exports = {
   async createPlayer(body, userId, imageUrl) {
     if (await Player.findOne({ playerId: body.playerId })) {
       const filepath = `.${imageUrl.split("api").pop()}`
-      fs.unlink(filepath, async function (err) {
-        if (err) throw err;
+
+      fs.unlink(filepath, function() {
+        throw { status: 409, message: `Player with id ${body.playerId} already exists.`};
       });
-      throw { status: 409, message: `Player with id ${body.playerId} already exists.` };
     }
     const user = await User.findById(userId);
     if (user === null) {
@@ -75,9 +75,7 @@ module.exports = {
     }
     if (player.creator.toString() === userId.toString()) {
       const filepath = `.${player.image.split("api").pop()}`
-      fs.unlink(filepath, async function (err) {
-        if (err) throw err;
-
+      fs.unlink(filepath, async function() {
         await Clan.updateOne(
           { _id: player.clan },
           { $pull: { members: player._id } }
