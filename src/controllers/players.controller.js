@@ -67,12 +67,12 @@ module.exports = {
   updatePlayerById: (req, res, next) => {
     try {
       assert.equal(typeof req.params.id, "string", "Player id is required.");
-      assert.equal(typeof req.body.name, "string", "Name is required.");
       const playerId = req.params.id;
       const name = req.body.name;
+      const level = req.body.level;
       const userId = req.user.data;
 
-      playerService.updatePlayerById(playerId, name, userId)
+      playerService.updatePlayerById(playerId, name, level, userId)
         .then(() => {
           res.status(200).send({
             message: 'Player updated'

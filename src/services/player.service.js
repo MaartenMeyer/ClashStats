@@ -55,13 +55,13 @@ module.exports = {
     }
   },
 
-  async updatePlayerById(id, name, userId) {
+  async updatePlayerById(id, name, level, userId) {
     const player = await Player.findOne({ playerId: id });
     if (player === null) {
       throw {}
     }
     if (player.creator.toString() === userId.toString()) {
-      return await player.updateOne({ $set: { 'name': name } });
+      return await player.updateOne({ $set: { 'name': name, 'level': level } });
     } else {
       throw { status: 403, message: 'Not authorised to update this player' };
     }
