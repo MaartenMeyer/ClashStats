@@ -90,6 +90,12 @@ module.exports = {
     }
 
     if (player.creator.toString() === userId.toString()) {
+      if(player.clan !== null) {
+        await Clan.updateOne(
+          { _id: player.clan },
+          { $pull: { members: player._id } }
+        );
+      }
       await Clan.updateOne(
         { _id: clan.id },
         { $addToSet: { members: player }}

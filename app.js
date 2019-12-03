@@ -60,16 +60,7 @@ app.all("*", (req, res, next) => {
   next();
 });
 
-// // 1. Enable CORS
-// // 2. Allow POST, GET, PUT, PATCH, DELETE & OPTIONS
-// // 3. Allow specified headers to be sent in request
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header('Access-Control-Allow-Methods', 'POST,GET,OPTIONS,PUT,PATCH,DELETE');
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
-//   next();
-// });
-//app.use('/api/images', express.static('images'));
+// Entry point to routes
 app.use('/api', imagesRoutes);
 app.use('/api', authenticationRoutes);
 app.use('/api', clansRoutes);
@@ -89,15 +80,6 @@ app.all("*", (req, res, next) => {
 
 // Error handler.
 app.use(errorHandler);
-// app.use((error, req, res, next) => {
-//   logger.error("Error handler: ", error.message.toString());
-//   if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
-//     return res.status(400).send({
-//       message: "Bad request"
-//     });
-//   }
-//   res.status(error.code).json(error);
-// });
 
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => logger.info("Server is listening on port 3000"));
