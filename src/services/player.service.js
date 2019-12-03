@@ -2,29 +2,33 @@ const Player = require('../models/player.model');
 const User = require('../models/user.model');
 const Clan = require('../models/clan.model');
 const Base = require('../models/base.model');
+const Image = require('../models/image.model');
 const fs = require('fs');
 
 module.exports = {
-  async createPlayer(body, userId, imageUrl) {
+  async createPlayer(body, userId, imageUrl, imageType) {
     if (await Player.findOne({ playerId: body.playerId })) {
-      const filepath = `.${imageUrl.split("api").pop()}`
-
-      fs.unlink(filepath, function() {
-        throw { status: 409, message: `Player with id ${body.playerId} already exists.`};
-      });
+      throw { status: 409, message: `Player with id ${body.playerId} already exists.` };
     }
     const user = await User.findById(userId);
     if (user === null) {
       throw { status: 404, message: 'User not found' };
     }
 
-    await new Player({
-      'playerId': body.playerId,
-      'name': body.name,
-      'level': body.level,
-      'creator': user,
-      'image': imageUrl
-    }).save();
+    const image = new Image();
+    image.img.data = fs.readFileSync(imageUrl);
+    image.img.contentType = imageType
+
+    image.save()
+      .then(async function() {
+        await new Player({
+          'playerId': body.playerId,
+          'name': body.name,
+          'level': body.level,
+          'creator': user,
+          'image': image
+        }).save();
+      })
   },
 
   async getAllPlayers() {
@@ -74,15 +78,18 @@ module.exports = {
       throw { status: 404, message: 'Player not found' };
     }
     if (player.creator.toString() === userId.toString()) {
-      const filepath = `.${player.image.split("api").pop()}`
-      fs.unlink(filepath, async function() {
+      if(player.clan !== null) {
         await Clan.updateOne(
           { _id: player.clan },
           { $pull: { members: player._id } }
         );
+      }
 
-        return await player.deleteOne();
-      });
+      await Base.deleteMany({ _id: { $in: player.bases } });
+
+      await Image.findByIdAndDelete(player.image);
+
+      return await player.deleteOne();
     } else {
       throw { status: 403, message: 'Not authorised to delete this player' };
     }

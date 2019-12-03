@@ -1,28 +1,33 @@
 const Clan = require('../models/clan.model');
 const User = require('../models/user.model');
 const Player = require('../models/player.model');
+const Image = require('../models/image.model');
 const fs = require('fs');
 
 module.exports = {
-  async createClan(body, userId, imageUrl) {
+  async createClan(body, userId, imageUrl, imageType) {
     if (await Clan.findOne({ clanId: body.clanId })) {
-      const filepath = `.${imageUrl.split("api").pop()}`
-      fs.unlink(filepath, function() {
-        throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
-      });
+      throw { status: 409, message: `Clan with id ${body.clanId} already exists.` };
     }
     const user = await User.findById(userId);
     if(user === null){
       throw { status: 404, message: 'User not found' };
     }
 
-    await new Clan({
-      'clanId': body.clanId,
-      'name': body.name,
-      'description': body.description,
-      'creator': user,
-      'image': imageUrl
-    }).save();
+    const image = new Image();
+    image.img.data = fs.readFileSync(imageUrl);
+    image.img.contentType = imageType
+
+    image.save()
+      .then(async function () {
+        await new Clan({
+          'clanId': body.clanId,
+          'name': body.name,
+          'description': body.description,
+          'creator': user,
+          'image': image
+        }).save();
+      })
   },
 
   async getAllClans() {
@@ -61,15 +66,14 @@ module.exports = {
       throw { status: 404, message: 'Clan not found' };
     }
     if(clan.creator.toString() === userId.toString()){
-      const filepath = `.${clan.image.split("api").pop()}`
-      fs.unlink(filepath, async function() {
-        await Player.updateMany(
-          { clan: clan.id },
-          { $unset: { clan: true } }
-        );
+      await Player.updateMany(
+        { clan: clan.id },
+        { $unset: { clan: true } }
+      );
 
-        return await clan.deleteOne()
-      });
+      await Image.findByIdAndDelete(clan.image);
+
+      return await clan.deleteOne()
     } else {
       throw { status: 403, message: 'Not authorised to delete this clan' };
     }
