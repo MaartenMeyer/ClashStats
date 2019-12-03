@@ -24,7 +24,8 @@ const ClanSchema = new Schema({
     required: [true, 'Clan needs to have a creator']
   },
   image: {
-    type: String
+    type: Schema.Types.ObjectId,
+    ref: 'image'
   },
   members: [{
     type: Schema.Types.ObjectId,

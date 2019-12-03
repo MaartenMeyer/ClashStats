@@ -19,6 +19,7 @@ if (env === 'development') {
 }
 
 const app = express();
+const imagesRoutes = require('./src/routes/images.routes');
 const authenticationRoutes = require('./src/routes/authentication.routes');
 const clansRoutes = require('./src/routes/clans.routes');
 const playersRoutes = require('./src/routes/players.routes');
@@ -68,7 +69,8 @@ app.all("*", (req, res, next) => {
 //   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
 //   next();
 // });
-app.use('/api/images', express.static('images'));
+//app.use('/api/images', express.static('images'));
+app.use('/api', imagesRoutes);
 app.use('/api', authenticationRoutes);
 app.use('/api', clansRoutes);
 app.use('/api', playersRoutes);

@@ -36,10 +36,10 @@ router.post('/players', upload.single('image'), (req, res, next) => {
     const playerBody = req.body;
     const userId = req.user.data;
 
-    const url = req.protocol + '://' + req.get('host');
-    const imageUrl = `${url}/api/images/${req.file.filename}`;
+    const imgUrl = req.file.path;
+    const imageType = req.file.mimetype;
 
-    playerService.createPlayer(playerBody, userId, imageUrl)
+    playerService.createPlayer(playerBody, userId, imgUrl, imageType)
       .then((player) => {
         res.status(200).send({
           message: 'Player created',
@@ -64,10 +64,10 @@ router.post('/players/:id/bases', upload.single('image'), (req, res, next) => {
     const baseBody = req.body;
     const userId = req.user.data;
 
-    const url = req.protocol + '://' + req.get('host');
-    const imageUrl = `${url}/api/images/${req.file.filename}`;
+    const imgUrl = req.file.path;
+    const imageType = req.file.mimetype;
 
-    baseService.addBaseToPlayer(playerId, baseBody, userId, imageUrl)
+    baseService.addBaseToPlayer(playerId, baseBody, userId, imgUrl, imageType)
       .then(() => {
         res.status(200).send({
           message: `Base added to player ${playerId}`

@@ -17,8 +17,9 @@ const BaseSchema = new Schema({
     required: [true, 'Base needs to have a creator']
   },
   image: {
-    type: String,
-  }
+    type: Schema.Types.ObjectId,
+    ref: 'image'
+  },
 });
 
 BaseSchema.set('toJSON', { virtuals: true });

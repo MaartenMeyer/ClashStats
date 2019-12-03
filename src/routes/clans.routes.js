@@ -35,10 +35,10 @@ router.post('/clans', upload.single('image'), (req, res, next) => {
     const clanBody = req.body;
     const userId = req.user.data;
 
-    const url = req.protocol + '://' + req.get('host');
-    const imageUrl = `${url}/api/images/${req.file.filename}`;
+    const imgUrl = req.file.path;
+    const imageType = req.file.mimetype;
 
-    clanService.createClan(clanBody, userId, imageUrl)
+    clanService.createClan(clanBody, userId, imgUrl, imageType)
       .then((clan) => {
         res.status(200).send({
           message: 'Clan created',
