@@ -118,7 +118,7 @@ module.exports = {
       baseService.deleteBaseById(baseId, userId)
         .then(() => {
           res.status(200).send({
-            message: 'Player deleted'
+            message: 'Base deleted'
           });
         })
         .catch((error) => next(error));
